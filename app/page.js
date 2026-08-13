@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 
 export default function BirthdayApp() {
@@ -8,13 +8,20 @@ export default function BirthdayApp() {
   const [pin, setPin] = useState('');
   const [showHint, setShowHint] = useState(false);
   const [letterOpen, setLetterOpen] = useState(false);
+  const audioRef = useRef(null);
 
   const handleKeyPress = (num) => {
     if (pin.length < 4) {
       const newPin = pin + num;
       setPin(newPin);
-      if (newPin === '2026') {
+      
+      // Passcode changed to 0815 (August 15)
+      if (newPin === '0815') {
         setTimeout(() => {
+          // Play background music
+          if (audioRef.current) {
+            audioRef.current.play().catch(() => console.log("Audio play blocked"));
+          }
           setStep('loading');
           setTimeout(() => setStep('welcome'), 2500);
         }, 300);
@@ -28,6 +35,9 @@ export default function BirthdayApp() {
 
   return (
     <main className="relative min-h-screen w-full flex items-center justify-center p-4 bg-[#0d0204] text-white overflow-hidden">
+      {/* Background Audio */}
+      <audio ref={audioRef} src="/bg-music.mp3" loop />
+
       {/* Background Red Ambient Glow */}
       <div className="absolute top-0 left-1/2 -translate-x-1/2 w-96 h-96 bg-red-900/30 blur-[120px] rounded-full pointer-events-none" />
       <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-96 h-96 bg-rose-950/40 blur-[140px] rounded-full pointer-events-none" />
@@ -40,7 +50,7 @@ export default function BirthdayApp() {
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
             exit={{ opacity: 0, scale: 0.95 }}
-            className="w-full max-w-xs bg-[#160509]/80 backdrop-blur-md p-6 rounded-3xl crimson-glow text-center space-y-5"
+            className="w-full max-w-xs bg-[#160509]/80 backdrop-blur-md p-6 rounded-3xl crimson-glow text-center space-y-5 z-10"
           >
             {/* Avatar Icon */}
             <div 
@@ -52,7 +62,7 @@ export default function BirthdayApp() {
 
             <div>
               <h2 className="text-xl font-serif tracking-widest text-red-200">LOCKED</h2>
-              <p className="text-[11px] text-gray-400 mt-1">Hint: Click on picture to know passcode!</p>
+              <p className="text-[11px] text-gray-400 mt-1">Hint: Tap picture to view passkey!</p>
             </div>
 
             {/* PIN Dots Display */}
@@ -96,7 +106,7 @@ export default function BirthdayApp() {
                   <button onClick={() => setShowHint(false)} className="absolute top-2 right-3 text-gray-400 text-lg">✕</button>
                   <img src="/passkey-pic.jpg" alt="Passcode Hint" className="w-full h-56 object-cover rounded-xl my-2" />
                   <span className="inline-block px-3 py-1 bg-red-950 text-red-300 text-xs font-mono rounded-full border border-red-500/30">
-                    PASSKEY • 2026
+                    PASSKEY • 0815
                   </span>
                 </div>
               </div>
@@ -111,7 +121,7 @@ export default function BirthdayApp() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="text-center space-y-4"
+            className="text-center space-y-4 z-10"
           >
             <div className="text-5xl animate-bounce">🐼</div>
             <h3 className="text-lg font-serif text-red-200 tracking-wider">Loading something special...</h3>
@@ -126,7 +136,7 @@ export default function BirthdayApp() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0 }}
-            className="text-center space-y-6 max-w-xs"
+            className="text-center space-y-6 max-w-xs z-10"
           >
             <div className="text-4xl animate-pulse">🐼</div>
             <h1 className="text-3xl font-serif text-red-100">It's Your Special Day 🌸</h1>
@@ -147,7 +157,7 @@ export default function BirthdayApp() {
             initial={{ opacity: 0, scale: 0.9 }}
             animate={{ opacity: 1, scale: 1 }}
             exit={{ opacity: 0 }}
-            className="text-center space-y-8 max-w-sm w-full"
+            className="text-center space-y-8 max-w-sm w-full z-10"
           >
             <div className="text-5xl">🐼</div>
             <h2 className="text-2xl font-serif text-red-200">Happy Birthday My Girl 🎀</h2>
@@ -164,7 +174,7 @@ export default function BirthdayApp() {
                 <p className="text-[10px] text-gray-400 uppercase tracking-widest mt-1">MONTHS</p>
               </div>
               <div>
-                <span className="text-4xl font-bold font-serif text-red-100">19</span>
+                <span className="text-4xl font-bold font-serif text-red-100">0</span>
                 <p className="text-[10px] text-gray-400 uppercase tracking-widest mt-1">DAYS</p>
               </div>
             </div>
@@ -185,7 +195,7 @@ export default function BirthdayApp() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="text-center space-y-6 w-full max-w-md"
+            className="text-center space-y-6 w-full max-w-md z-10"
           >
             <div>
               <h2 className="text-2xl font-serif text-red-200">Special Memories</h2>
@@ -219,7 +229,7 @@ export default function BirthdayApp() {
             key="letter"
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            className="text-center space-y-6 max-w-xs w-full"
+            className="text-center space-y-6 max-w-sm w-full z-10"
           >
             {!letterOpen ? (
               <div className="space-y-6">
@@ -236,24 +246,34 @@ export default function BirthdayApp() {
               <motion.div
                 initial={{ opacity: 0, scale: 0.9 }}
                 animate={{ opacity: 1, scale: 1 }}
-                className="bg-[#1c070b] p-6 rounded-3xl crimson-glow text-left space-y-4 relative"
+                className="bg-[#1c070b]/90 max-h-[80vh] overflow-y-auto p-6 rounded-3xl crimson-glow text-left space-y-4 relative no-scrollbar"
               >
                 <div className="flex justify-between items-center border-b border-red-900/40 pb-2">
                   <h3 className="text-sm font-serif text-red-200">JUST FOR YOU ✨</h3>
-                  <p className="text-[10px] text-gray-500">From my heart to yours</p>
+                  <p className="text-[10px] text-gray-400">From my heart to yours</p>
                 </div>
                 
-                <p className="text-xs text-gray-200 leading-relaxed font-light">
-                  Happy Birthday, Love ❤️
-                  <br /><br />
-                  You are the most beautiful part of my life, and I'm so lucky to have you. Your smile makes my days better, and your presence makes everything feel special.
-                  <br /><br />
-                  Always stay happy — because your happiness means a lot to me.
-                </p>
+                <div className="text-xs text-gray-200 leading-relaxed font-light space-y-3 whitespace-pre-line">
+                  Happy birthday, Bebe! ❤️🎂
 
-                <div className="flex gap-2 pt-2">
+                  Gusto ko lang sabihin kung gaano ako kasaya at nagpapasalamat na dumating ka sa buhay ko. Simula nang makilala kita, mas naging espesyal at mas makulay ang mga araw ko. Hindi man ako laging perfect at minsan nagkakaroon tayo ng tampuhan o hindi pagkakaintindihan, gusto kong malaman mo na ikaw pa rin ang pipiliin ko araw-araw.
+
+                  Sa birthday mo, ang wish ko ay maging masaya ka palagi, maabot mo lahat ng pangarap mo, at sana lagi mong maalala na may taong nandito para suportahan at mahalin ka. Gusto kong kasama mo ako sa mga masasayang moments, pati na rin sa mga panahong kailangan mo ng karamay.
+
+                  Salamat sa lahat ng pagmamahal, pag-unawa, at saya na binibigay mo sa akin. Salamat dahil hinahayaan mo akong maging parte ng buhay mo. Sobrang swerte ko na ikaw ang girlfriend ko, at hinding-hindi ko ipagpapalit yung mga memories at moments na pinagsasaluhan natin.
+
+                  Sana sa paglipas ng mga taon, mas marami pa tayong birthdays na magkasama, mas maraming memories na mabubuo, at mas marami pang pangarap na sabay nating maaabot. ❤️
+
+                  Happy birthday ulit, mahal. Enjoy your special day! Tandaan mo, mahal na mahal kita at palagi akong nandito para sa'yo. I love you so much, bebe. ❤️🥺🎂
+                </div>
+
+                <div className="pt-2">
                   <button
-                    onClick={() => setStep('lock')}
+                    onClick={() => {
+                      setLetterOpen(false);
+                      setStep('lock');
+                      setPin('');
+                    }}
                     className="w-full py-2 bg-red-950/80 hover:bg-red-900 text-red-300 rounded-xl text-[10px] border border-red-500/30"
                   >
                     RESTART 🔄
