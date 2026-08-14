@@ -203,16 +203,16 @@ export default function BirthdayApp() {
             </div>
 
             {/* Horizontal Scroll Gallery */}
-            <div className="flex gap-4 overflow-x-auto snap-x snap-mandatory py-4 px-2 no-scrollbar">
-              {['/photo1.jpg', '/photo2.jpg', '/photo3.jpg'].map((src, idx) => (
-                <div 
-                  key={idx} 
-                  className="snap-center shrink-0 w-64 h-80 rounded-2xl overflow-hidden crimson-glow bg-[#1a080c]"
-                >
-                  <img src={src} alt={`Memory ${idx}`} className="w-full h-full object-cover" />
-                </div>
-              ))}
-            </div>
+<div className="flex gap-4 overflow-x-auto snap-x snap-mandatory py-4 px-2 no-scrollbar">
+  {Array.from({ length: 18 }, (_, i) => `/photo${i + 1}.jpg`).map((src, idx) => (
+    <div 
+      key={idx} 
+      className="snap-center shrink-0 w-64 h-80 rounded-2xl overflow-hidden crimson-glow bg-[#1a080c]"
+    >
+      <img src={src} alt={`Memory ${idx + 1}`} className="w-full h-full object-cover" />
+    </div>
+  ))}
+</div>
 
             <button
               onClick={() => setStep('letter')}
